@@ -7,10 +7,9 @@ var previous_rotation: Quaternion
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	self.grabbed_object = null
-	pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
+func _process(delta):
 	if self.grabbed_object:
 		self.grabbed_object.position += self.position - self.previous_position
 		self.grabbed_object.quaternion = self.quaternion * self.previous_rotation.inverse() * self.grabbed_object.quaternion
@@ -30,7 +29,6 @@ func _on_button_pressed(name: String) -> void:
 	for grabbable in grabbables:
 		var grabbable_body = grabbable as RigidBody3D
 		if self.grabbed_object == null && collision_area.overlaps_body(grabbable_body):
-			grabbable_body.freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
 			grabbable_body.freeze = true
 			self.grabbed_object = grabbable_body
 	
@@ -42,5 +40,6 @@ func _on_button_released(name: String) -> void:
 		
 	if self.grabbed_object:
 		self.grabbed_object.freeze = false
-		self.grabbed_object.gravity_scale = 1
+		self.grabbed_object.linear_velocity = Vector3(0, -0.1, 0)
+		self.grabbed_object.angular_velocity = Vector3.ZERO
 		self.grabbed_object = null
